@@ -15,7 +15,7 @@ $(document).ready(function() {
 			type: "GET"
 		}).done(function(bookDetails){
 			detailDiv.toggle();
-			detailDiv.text("Author: " + bookDetails.author + ", ID " + bookDetails.id + ", ISBN " + bookDetails.isbn + ", publisher " + bookDetails.publisher + ", type " + bookDetails.type);
+			detailDiv.text("Author: " + bookDetails.author + ", ID: " + bookDetails.id + ", ISBN: " + bookDetails.isbn + ", publisher: " + bookDetails.publisher + ", type: " + bookDetails.type);
 
 		});
 	})
@@ -27,17 +27,28 @@ function handleForm(){
 	var submitButton = form.find('#add-button');
 	submitButton.on('click', function(event){
 		event.preventDefault();
-		alert('Dodałeś książkę');
 
-		var author = $('#author').val();
-		var isbn = $('#isbn').val();
-		var publisher = $('#publisher').val();
-		var title = $('#title').val();
-		var type = $('#type').val();
+		var newBook= {};
+
+		newBook.author = $('#author').val();
+		newBook.isbn = $('#isbn').val();
+		newBook.publisher = $('#publisher').val();
+		newBook.title = $('#title').val();
+		newBook.type = $('#type').val();
+
+		$.ajax({
+			url: "http://localhost:8282/books",
+			type: "POST",
+			headers: {
+				'Accept': 'application/json',
+				"Content-Type": "application/json"
+			},
+			data: JSON.stringify(newBook)
+		}).done(function(){
+			refreshBook($('#root'))
+		})
 	});
 }
-
-
 
 function refreshBook(rootElement){
 	rootElement.html("");
@@ -47,16 +58,9 @@ function refreshBook(rootElement){
 
 	
 		for(var i=0; i < data.length; i++){
-			var bookElement = $("<div class='book' data-id='" + data[i].id + "'>" + data[i].title + "<div style='display: none; background-color: grey;'></div></div>");
+			var bookElement = $("<div class='book' data-id='" + data[i].id + "'>" + data[i].title + "<div style='display: none; background-color: azure;'></div></div>");
 			rootElement.append(bookElement);
 		}
 
 	})
 }
-
-	// author
-	// id
-	// isbn
-	// publisher
-	// title
-	// type
